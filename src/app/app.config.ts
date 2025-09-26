@@ -5,6 +5,7 @@ import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { provideToastr } from 'ngx-toastr';
 import { NgxUiLoaderConfig, NgxUiLoaderModule } from 'ngx-ui-loader';
 
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideHttpClient(),
     provideAnimations(),
     provideToastr(),
     provideEnvironmentNgxMask(),

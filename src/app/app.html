@@ -1,21 +1,5 @@
-<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 gap-6">
-  <ngx-ui-loader></ngx-ui-loader>
+<!-- Renderiza as rotas -->
+<router-outlet></router-outlet>
 
-  <h1 class="text-3xl font-bold underline text-blue-700">
-    GestRun
-  </h1>
-
-  <button
-    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors font-semibold shadow cursor-pointer"
-    (click)="showSuccess()"
-  >
-    Show Success
-  </button>
-
-  <input
-    type="text"
-    mask="(99)99999-9999"
-    class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    placeholder="Telefone"
-  />
-</div>
+<!-- Loader Global -->
+<ngx-ui-loader></ngx-ui-loader>
