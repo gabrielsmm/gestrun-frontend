@@ -1,1 +1,31 @@
-<p>navbar works!</p>
+<mat-toolbar color="primary" class="flex justify-between px-4 bg-white shadow-md">
+  <button mat-icon-button (click)="toggleSidenav.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="text-2xl sm:text-3xl font-extrabold text-blue-600 drop-shadow-md tracking-tight">
+    GestRun
+  </span>
+
+  <div class="flex items-center space-x-2">
+    <button mat-button [matMenuTriggerFor]="userMenu" class="flex items-center space-x-2">
+      <mat-icon class="!flex !items-center !text-[1.6rem] !h-12 !w-6">account_circle</mat-icon>
+      <mat-icon class="!flex !items-center !text-[1.2rem] !mr-0">expand_more</mat-icon>
+    </button>
+  </div>
+
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span>Perfil</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>settings</mat-icon>
+      <span>Configurações</span>
+    </button>
+    <button mat-menu-item (click)="deslogar()">
+      <mat-icon>logout</mat-icon>
+      <span>Sair</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

@@ -1,9 +1,11 @@
-<app-navbar></app-navbar>
+<app-navbar class="fixed top-0 left-0 w-full z-10"></app-navbar>
 
-<div class="flex min-h-screen">
-  <app-sidenav></app-sidenav>
+<div class="flex min-h-screen pt-16">
+  <app-sidenav #sidenav></app-sidenav>
 
   <main class="flex-1 p-6 bg-gray-50">
     <router-outlet></router-outlet>
   </main>
 </div>
+
+<!-- Adicionar no navbar: (toggleSidenav)="sidenav.toggle()" -->
