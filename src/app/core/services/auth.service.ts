@@ -5,17 +5,10 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-
-export interface LoginRequest {
-  email: string;
-  senha: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  tipo: string; // Bearer
-  expiraEm: string;
-}
+import { LoginRequest } from '../models/login-request.model';
+import { LoginResponse } from '../models/login-response.model';
+import { RegistroRequest } from '../models/registro-request.model';
+import { Usuario } from '../models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,14 +35,8 @@ export class AuthService {
       );
   }
 
-  registrar(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/registrar`, request)
-      .pipe(
-        tap(res => {
-          localStorage.setItem('token', res.token);
-          this.usuarioLogadoSubject.next(res);
-        })
-      );
+  registrar(request: RegistroRequest): Observable<Usuario> {
+    return this.http.post<Usuario>(`${this.apiUrl}/registrar`, request);
   }
 
   logout(): void {

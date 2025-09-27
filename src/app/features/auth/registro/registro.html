@@ -1,0 +1,56 @@
+<h1 class="text-4xl sm:text-5xl font-extrabold text-blue-600 mb-4 text-center drop-shadow-md">
+  GestRun
+</h1>
+<h2 class="text-2xl font-semibold mb-8 text-center text-gray-700 drop-shadow-sm">
+  Registro
+</h2>
+<form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="space-y-6">
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Nome</mat-label>
+    <input matInput type="text" formControlName="nome" required />
+    <mat-icon matSuffix>person</mat-icon>
+    @if (registroForm.get('nome')?.invalid && registroForm.get('nome')?.touched) {
+      <mat-error>Nome obrigatório (mínimo 3 caracteres)</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>E-mail</mat-label>
+    <input matInput type="email" formControlName="email" required />
+    <mat-icon matSuffix>mail</mat-icon>
+    @if (registroForm.get('email')?.invalid && registroForm.get('email')?.touched) {
+      <mat-error>E-mail inválido</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Senha</mat-label>
+    <input matInput type="password" formControlName="senha" required />
+    <mat-icon matSuffix>lock</mat-icon>
+    @if (registroForm.get('senha')?.invalid && registroForm.get('senha')?.touched) {
+      <mat-error>Senha obrigatória (mínimo 8 caracteres)</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Confirme a senha</mat-label>
+    <input matInput type="password" formControlName="confirmacaoSenha" required [errorStateMatcher]="senhaMatcher" />
+    <mat-icon matSuffix>lock</mat-icon>
+    @if (registroForm.get('confirmacaoSenha')?.invalid && registroForm.get('confirmacaoSenha')?.touched) {
+      <mat-error>Confirmação obrigatória</mat-error>
+    }
+    @if (registroForm.errors?.['senhaDiferente'] && registroForm.get('confirmacaoSenha')?.touched) {
+      <mat-error>As senhas não conferem.</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" class="w-full py-2 font-semibold" style="font-size:1.1rem;"
+    [disabled]="registroForm.invalid">
+    Registrar
+  </button>
+</form>
+
+<div class="text-center mt-8">
+  <span class="text-gray-600">Já tem uma conta?</span>
+  <a routerLink="/auth/login" class="ml-2 text-blue-600 font-semibold hover:underline transition">Fazer login</a>
+</div>

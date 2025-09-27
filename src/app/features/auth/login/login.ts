@@ -26,6 +26,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
   styleUrl: './login.scss'
 })
 export class Login {
+
   loginForm: FormGroup;
 
   constructor(
@@ -50,14 +51,16 @@ export class Login {
       this.authService.login({ email, senha }).subscribe({
         next: (res) => {
           console.log(res);
-          this.ngxUiLoaderService.stop();
           this.toastr.success('Login realizado com sucesso!', 'Bem-vindo');
           this.router.navigate(['/']);
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Usuário ou senha inválidos.', 'Erro ao realizar login');
+          this.toastr.error(err.error?.mensagem || 'Erro ao realizar login. Tente novamente mais tarde.', 'Erro ao realizar login');
           console.error('Erro ao realizar login:', err);
+        },
+        complete: () => {
+          this.ngxUiLoaderService.stop();
         }
       });
     }
