@@ -1,1 +1,25 @@
-<p>sidenav works!</p>
+<aside class="bg-white border-r border-gray-200 h-screen transition-all duration-300 shadow-md"
+       [ngClass]="opened ? 'w-50' : 'w-20'">
+  <nav class="flex flex-col space-y-2">
+    @if (authService.usuarioLogado$ | async; as usuario) {
+      @for (item of navItems; track item.descricao) {
+        @if (item.perfisPermitidos.includes(usuario.perfil)) {
+          <a [routerLink]="item.rota"
+            routerLinkActive="bg-blue-100 text-blue-600"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex items-center px-4 py-3 hover:bg-blue-50 transition-colors duration-200 rounded-md cursor-pointer"
+            [ngClass]="{ 'justify-center': !opened }">
+
+            <mat-icon [ngClass]="opened ? 'mr-3' : 'mr-0'">
+              {{ item.icone }}
+            </mat-icon>
+
+            @if (opened) {
+              <span class="font-medium">{{ item.descricao }}</span>
+            }
+          </a>
+        }
+      }
+    }
+  </nav>
+</aside>

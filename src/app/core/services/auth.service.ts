@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { LoginRequest } from '../models/login-request.model';
 import { LoginResponse } from '../models/login-response.model';
@@ -14,10 +14,10 @@ import { Usuario } from '../models/usuario.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = `${environment.apiUrl}`;
   private jwtHelper = new JwtHelperService();
-  private usuarioLogadoSubject = new BehaviorSubject<LoginResponse | null>(null);
 
+  private usuarioLogadoSubject = new BehaviorSubject<Usuario | null>(null);
   usuarioLogado$ = this.usuarioLogadoSubject.asObservable();
 
   constructor(
@@ -25,28 +25,29 @@ export class AuthService {
     private router: Router
   ) {}
 
-  login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request)
-      .pipe(
-        tap(res => {
-          localStorage.setItem('token', res.token);
-          this.usuarioLogadoSubject.next(res);
-        })
-      );
+  login(request: LoginRequest): Observable<void> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, request).pipe(
+      switchMap(res => {
+        localStorage.setItem('token', res.token);
+        return this.carregarPerfil();
+      })
+    );
   }
 
   registrar(request: RegistroRequest): Observable<Usuario> {
-    return this.http.post<Usuario>(`${this.apiUrl}/registrar`, request);
+    return this.http.post<Usuario>(`${this.apiUrl}/auth/registrar`, request);
+  }
+
+  carregarPerfil(): Observable<void> {
+    return this.http.get<Usuario>(`${this.apiUrl}/api/usuarios/perfil`).pipe(
+      tap(usuario => this.usuarioLogadoSubject.next(usuario)),
+      map(() => void 0)
+    );
   }
 
   estaAutenticado(): boolean {
     const token = this.getToken();
-
-    if (!token) {
-      return false;
-    }
-
-    return !this.jwtHelper.isTokenExpired(token);
+    return token != null && !this.jwtHelper.isTokenExpired(token);
   }
 
   deslogar(): void {

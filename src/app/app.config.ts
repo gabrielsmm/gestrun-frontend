@@ -5,8 +5,9 @@ import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { provideToastr } from 'ngx-toastr';
 import { NgxUiLoaderConfig, NgxUiLoaderModule } from 'ngx-ui-loader';
 
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   // your configuration here
@@ -17,7 +18,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
     provideAnimations(),
     provideToastr(),
     provideEnvironmentNgxMask(),

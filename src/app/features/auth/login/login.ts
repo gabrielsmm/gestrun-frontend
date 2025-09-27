@@ -50,7 +50,6 @@ export class Login {
 
       this.authService.login({ email, senha }).subscribe({
         next: (res) => {
-          console.log(res);
           this.toastr.success('Login realizado com sucesso!', 'Bem-vindo');
           this.router.navigate(['/painel-principal']);
         },
