@@ -52,7 +52,7 @@ export class Login {
         next: (res) => {
           console.log(res);
           this.toastr.success('Login realizado com sucesso!', 'Bem-vindo');
-          this.router.navigate(['/']);
+          this.router.navigate(['/painel-principal']);
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();

@@ -39,23 +39,29 @@ export class AuthService {
     return this.http.post<Usuario>(`${this.apiUrl}/registrar`, request);
   }
 
-  logout(): void {
+  estaAutenticado(): boolean {
+    const token = this.getToken();
+
+    if (!token) {
+      return false;
+    }
+
+    return !this.jwtHelper.isTokenExpired(token);
+  }
+
+  deslogar(): void {
     localStorage.removeItem('token');
     this.usuarioLogadoSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  isLoggedIn(): boolean {
-    const token = this.getToken();
-    return token != null && !this.jwtHelper.isTokenExpired(token);
-  }
-
-  getDecodedToken(): any {
+  getTokenDecodificado(): any {
     const token = this.getToken();
     return token ? this.jwtHelper.decodeToken(token) : null;
   }
+
 }
