@@ -1,6 +1,6 @@
 <aside class="bg-white border-r border-gray-200 h-screen transition-all duration-300 shadow-md"
        [ngClass]="opened ? 'w-50' : 'w-20'">
-  <nav class="flex flex-col space-y-2">
+  <nav class="flex flex-col">
     @if (authService.usuarioLogado$ | async; as usuario) {
       @for (item of navItems; track item.descricao) {
         @if (item.perfisPermitidos.includes(usuario.perfil)) {

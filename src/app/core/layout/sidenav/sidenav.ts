@@ -30,6 +30,7 @@ export class Sidenav {
   protected authService = inject(AuthService);
 
   navItems: NavItem[] = [
+    { descricao: 'Início', icone: 'home', rota: '/painel-principal', perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] },
     { descricao: 'Usuários', icone: 'people', rota: '/usuarios', perfisPermitidos: [Perfil.ADMIN] },
     { descricao: 'Corridas', icone: 'directions_run', rota: '/corridas', perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] },
     { descricao: 'Categorias', icone: 'category', rota: '/categorias', perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] },
