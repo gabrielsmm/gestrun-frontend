@@ -1,1 +1,23 @@
-<p>painel-principal works!</p>
+<div class="p-6">
+  <h1 class="text-3xl font-extrabold text-blue-600 mb-6">Painel Principal</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (item of itensPainel; track item.titulo) {
+      @if (podeAcessar(item)) {
+        <mat-card
+          @cardAnim
+          class="cursor-pointer shadow-md hover:shadow-xl transition duration-300"
+          (click)="navegar(item.rota)">
+
+          <div class="flex items-center space-x-4 p-4">
+            <mat-icon class="text-4xl text-blue-600">{{ item.icone }}</mat-icon>
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">{{ item.titulo }}</h2>
+              <p class="text-gray-500 text-sm">{{ item.descricao }}</p>
+            </div>
+          </div>
+        </mat-card>
+      }
+    }
+  </div>
+</div>
