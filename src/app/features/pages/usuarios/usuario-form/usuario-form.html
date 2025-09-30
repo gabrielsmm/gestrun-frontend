@@ -1,0 +1,44 @@
+<h2 mat-dialog-title class="text-2xl font-bold text-blue-600 ml-6 mt-3">
+  {{ usuario ? 'Editar Usuário' : 'Novo Usuário' }}
+</h2>
+
+<mat-dialog-content class="p-4">
+  <form [formGroup]="form" class="flex flex-col gap-6">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome" />
+      @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
+        <mat-error>Nome é obrigatório</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <mat-error>Email inválido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Perfil</mat-label>
+      <mat-select formControlName="perfil">
+        <mat-option value="ADMIN">Administrador</mat-option>
+        <mat-option value="ORGANIZADOR">Organizador</mat-option>
+      </mat-select>
+      @if (form.get('perfil')?.invalid && form.get('perfil')?.touched) {
+        <mat-error>Perfil é obrigatório</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex justify-end gap-3 p-4 border-t border-gray-200">
+  <button mat-stroked-button color="warn" (click)="cancelar()">
+    Cancelar
+  </button>
+  <button mat-flat-button color="primary" (click)="salvar()" [disabled]="form.invalid">
+    <mat-icon class="mr-1">save</mat-icon>
+    Salvar
+  </button>
+</mat-dialog-actions>
