@@ -2,6 +2,12 @@
   <div class="flex justify-between items-center mb-4">
     <h2 class="text-2xl font-bold text-gray-700">Usuários</h2>
     <!-- <button mat-raised-button color="primary" (click)="abrirForm()">Novo Usuário</button> -->
+
+    <mat-form-field appearance="fill" class="w-64">
+      <mat-label>Pesquisar</mat-label>
+      <input matInput (keyup)="aplicarFiltro($event)" placeholder="Nome ou email">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
   </div>
 
   <table mat-table [dataSource]="usuarios" class="w-full mat-elevation-z2">
@@ -40,4 +46,12 @@
     <tr mat-header-row *matHeaderRowDef="colunas"></tr>
     <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
   </table>
+
+  <mat-paginator
+    [length]="totalRegistros"
+    [pageSize]="registrosPorPagina"
+    [pageIndex]="pagina"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="mudarPagina($event)">
+  </mat-paginator>
 </div>

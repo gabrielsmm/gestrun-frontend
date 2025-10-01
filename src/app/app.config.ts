@@ -1,9 +1,11 @@
 import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { provideToastr } from 'ngx-toastr';
 import { NgxUiLoaderConfig, NgxUiLoaderModule } from 'ngx-ui-loader';
+import { getPtBrPaginatorIntl } from './core/i18n/mat-paginator-intl-pt';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
@@ -26,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideEnvironmentNgxMask(),
     importProvidersFrom(
       NgxUiLoaderModule.forRoot(ngxUiLoaderConfig)
-    )
+    ),
+    { provide: MatPaginatorIntl, useFactory: getPtBrPaginatorIntl }
   ]
 };
