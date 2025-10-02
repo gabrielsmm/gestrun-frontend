@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { perfilGuard } from './core/guards/perfil-guard';
 import { AuthLayout } from './core/layout/auth-layout/auth-layout';
 import { MainLayout } from './core/layout/main-layout/main-layout';
+import { Perfil } from './core/models/perfil.enum';
 import { authRoutes } from './features/auth/auth.routes';
 import { Corridas } from './features/pages/corridas/corridas';
 import { PainelPrincipal } from './features/pages/painel-principal/painel-principal';
@@ -28,10 +30,18 @@ export const routes: Routes = [
       { path: 'painel-principal', component: PainelPrincipal },
 
       // Páginas principais do sistema
-      { path: 'usuarios', component: Usuarios },
-      { path: 'corridas', component: Corridas },
-      // { path: 'resultados', component: ResultadosPage },
-      // { path: 'relatorios', component: RelatoriosPage },
+      {
+        path: 'usuarios',
+        component: Usuarios,
+        canActivate: [perfilGuard],
+        data: { perfisPermitidos: [Perfil.ADMIN] }
+      },
+      {
+        path: 'corridas',
+        component: Corridas,
+        canActivate: [perfilGuard],
+        data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
+      },
     ]
   },
 
