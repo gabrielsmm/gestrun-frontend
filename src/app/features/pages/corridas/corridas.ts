@@ -1,24 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Perfil } from '../../../core/models/perfil.enum';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { Corrida } from '../../../core/models/corrida.model';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
-import { Usuario } from './../../../core/models/usuario.model';
-import { UsuariosService } from './service/usuarios.service';
-import { UsuarioForm } from './usuario-form/usuario-form';
-import { MatInputModule } from '@angular/material/input';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { CorridaForm } from './corrida-form/corrida-form';
+import { CorridasService } from './service/corridas.service';
 
 @Component({
-  selector: 'app-usuarios',
+  selector: 'app-corridas',
   imports: [
     CommonModule,
     MatButtonModule,
@@ -28,13 +26,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     MatFormFieldModule,
     MatPaginatorModule
   ],
-  templateUrl: './usuarios.html',
-  styleUrl: './usuarios.scss'
+  templateUrl: './corridas.html',
+  styleUrl: './corridas.scss'
 })
-export class Usuarios {
-  Perfil = Perfil;
-  colunas = ['nome', 'email', 'perfil', 'acoes'];
-  usuarios: Usuario[] = [];
+export class Corridas implements OnInit {
+
+  colunas = ['nome', 'data', 'local', 'distanciaKm', 'acoes'];
+  corridas: Corrida[] = [];
   totalRegistros = 0;
   registrosPorPagina = 10;
   pagina = 0;
@@ -43,7 +41,7 @@ export class Usuarios {
   private filtroSubject = new Subject<string>();
 
   constructor(
-    private usuariosService: UsuariosService,
+    private corridasService: CorridasService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService
@@ -56,27 +54,27 @@ export class Usuarios {
     ).subscribe((valor) => {
       this.filtro = valor;
       this.pagina = 0;
-      this.carregarUsuarios();
+      this.carregarCorridas();
     });
 
-    this.carregarUsuarios();
+    this.carregarCorridas();
   }
 
-  carregarUsuarios(): void {
+  carregarCorridas(): void {
     this.ngxUiLoaderService.start();
 
-    this.usuariosService
-      .listar(this.pagina, this.registrosPorPagina, this.filtro)
+    this.corridasService
+      .listarPorOrganizadorPaginado(this.pagina, this.registrosPorPagina, this.filtro)
       .subscribe({
         next: (res) => {
           console.log(res);
-          this.usuarios = res.conteudo || [];
+          this.corridas = res.conteudo || [];
           this.totalRegistros = res.totalElementos;
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao carregar usuários. Tente novamente mais tarde.', 'Erro');
-          console.error('Erro ao carregar usuários:', err);
+          this.toastr.error('Erro ao carregar corridas. Tente novamente mais tarde.', 'Erro');
+          console.error('Erro ao carregar corridas:', err);
         },
         complete: () => {
           this.ngxUiLoaderService.stop();
@@ -92,28 +90,28 @@ export class Usuarios {
   mudarPagina(event: PageEvent) {
     this.pagina = event.pageIndex;
     this.registrosPorPagina = event.pageSize;
-    this.carregarUsuarios();
+    this.carregarCorridas();
   }
 
-  abrirForm(usuario?: Usuario): void {
-    const dialogRef = this.dialog.open(UsuarioForm, {
+  abrirForm(corrida?: Corrida): void {
+    const dialogRef = this.dialog.open(CorridaForm, {
       width: '600px',
-      data: usuario ?? null
+      data: corrida ?? null
     });
 
     dialogRef.afterClosed().subscribe((resultado) => {
       if (resultado) {
-        this.carregarUsuarios();
+        this.carregarCorridas();
       }
     });
   }
 
-  excluir(usuario: Usuario): void {
+  excluir(corrida: Corrida): void {
     const dialogRef = this.dialog.open(ConfirmacaoDialog, {
       width: '400px',
       data: <ConfirmacaoDialogData>{
         titulo: 'Confirmar exclusão',
-        mensagem: `Tem certeza que deseja excluir o usuário ${usuario.nome}?`,
+        mensagem: `Tem certeza que deseja excluir a corrida ${corrida.nome}?`,
         confirmarTexto: 'Sim, excluir',
         cancelarTexto: 'Não'
       }
@@ -123,15 +121,15 @@ export class Usuarios {
       if (confirmado) {
         this.ngxUiLoaderService.start();
 
-        this.usuariosService.excluir(usuario.id).subscribe({
+        this.corridasService.excluir(corrida.id).subscribe({
           next: (res) => {
-            this.toastr.success('Usuário excluído com sucesso.', 'Sucesso');
-            this.carregarUsuarios();
+            this.toastr.success('Corrida excluída com sucesso.', 'Sucesso');
+            this.carregarCorridas();
           },
           error: (err) => {
             this.ngxUiLoaderService.stop();
-            this.toastr.error('Erro ao excluir usuário. Tente novamente mais tarde.', 'Erro');
-            console.error('Erro ao excluir usuário:', err);
+            this.toastr.error('Erro ao excluir corrida. Tente novamente mais tarde.', 'Erro');
+            console.error('Erro ao excluir corrida:', err);
           },
           complete: () => {
             this.ngxUiLoaderService.stop();

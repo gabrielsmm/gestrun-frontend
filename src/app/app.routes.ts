@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth-guard';
 import { AuthLayout } from './core/layout/auth-layout/auth-layout';
 import { MainLayout } from './core/layout/main-layout/main-layout';
 import { authRoutes } from './features/auth/auth.routes';
+import { Corridas } from './features/pages/corridas/corridas';
 import { PainelPrincipal } from './features/pages/painel-principal/painel-principal';
-import { authGuard } from './core/guards/auth-guard';
 import { Usuarios } from './features/pages/usuarios/usuarios';
 
 export const routes: Routes = [
@@ -28,7 +29,7 @@ export const routes: Routes = [
 
       // Páginas principais do sistema
       { path: 'usuarios', component: Usuarios },
-      // { path: 'corridas', component: CorridasPage },
+      { path: 'corridas', component: Corridas },
       // { path: 'resultados', component: ResultadosPage },
       // { path: 'relatorios', component: RelatoriosPage },
     ]

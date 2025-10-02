@@ -47,6 +47,12 @@
     <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
   </table>
 
+  @if (usuarios.length === 0) {
+    <div class="text-center text-gray-500 py-8">
+      Nenhum usuário encontrado.
+    </div>
+  }
+
   <mat-paginator
     [length]="totalRegistros"
     [pageSize]="registrosPorPagina"
