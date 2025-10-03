@@ -1,0 +1,141 @@
+<h2 mat-dialog-title class="text-2xl font-bold text-blue-600 ml-6 mt-3">
+  {{ modo === 'criar' ? 'Nova Inscrição' : modo === 'editar' ? 'Editar Inscrição' : 'Visualizar Inscrição' }}
+</h2>
+
+<mat-dialog-content class="p-4">
+  <form [formGroup]="form" class="flex flex-col gap-6">
+    <!-- Modo criar -->
+    @if (modo === 'criar') {
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="nomeCorredor" />
+        @if (form.get('nomeCorredor')?.invalid && form.get('nomeCorredor')?.touched) {
+          <mat-error>Informe o nome</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Documento</mat-label>
+        <input matInput formControlName="documento" mask="000.000.000-00" />
+        @if (form.get('documento')?.invalid && form.get('documento')?.touched) {
+          <mat-error>Informe o documento</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Data de Nascimento</mat-label>
+        <input matInput type="date" formControlName="dataNascimento" />
+        @if (form.get('dataNascimento')?.invalid && form.get('dataNascimento')?.touched) {
+          <mat-error>Informe a data de nascimento</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Sexo</mat-label>
+        <mat-select formControlName="sexo">
+          <mat-option value="M">Masculino</mat-option>
+          <mat-option value="F">Feminino</mat-option>
+        </mat-select>
+        @if (form.get('sexo')?.invalid && form.get('sexo')?.touched) {
+          <mat-error>Selecione o sexo</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <mat-error>Informe o email</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Telefone</mat-label>
+        <input matInput formControlName="telefone" mask="(00) 00000-0000" />
+        @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) {
+          <mat-error>Informe o telefone</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <!-- Modo editar -->
+    @if (modo === 'editar') {
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="PENDENTE">Pendente</mat-option>
+          <mat-option value="CONFIRMADA">Confirmada</mat-option>
+          <mat-option value="CANCELADA">Cancelada</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Número Peito</mat-label>
+        <input matInput type="number" formControlName="numeroPeito" />
+      </mat-form-field>
+
+      <!-- Informações relevantes apenas para consulta -->
+      <div class="text-gray-600">Nome: {{ inscricao?.nomeCorredor }}</div>
+      <div class="text-gray-600">Documento: {{ (inscricao?.documento || '') | mask:'000.000.000-00' }}</div>
+      <div class="text-gray-600">Data de Nascimento: {{ inscricao?.dataNascimento | date:'dd/MM/yyyy' }}</div>
+      <div class="text-gray-600">Sexo: {{ getDescricaoSexo(inscricao?.sexo || '') }}</div>
+      <div class="text-gray-600">Email: {{ inscricao?.email }}</div>
+      <div class="text-gray-600">Telefone: {{ (inscricao?.telefone || '') | mask:'(00) 00000-0000' }}</div>
+    }
+
+    <!-- Modo visualizar -->
+    @if (modo === 'visualizar') {
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Nome</mat-label>
+        <input matInput [value]="inscricao?.nomeCorredor" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Documento</mat-label>
+        <input matInput [value]="(inscricao?.documento || '') | mask:'000.000.000-00'" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Data de Nascimento</mat-label>
+        <input matInput [value]="inscricao?.dataNascimento | date:'dd/MM/yyyy'" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Sexo</mat-label>
+        <input matInput [value]="getDescricaoSexo(inscricao?.sexo || '')" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput [value]="inscricao?.email" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Telefone</mat-label>
+        <input matInput [value]="(inscricao?.telefone || '') | mask:'(00) 00000-0000'" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Status</mat-label>
+        <input matInput [value]="getDescricaoStatus(inscricao?.status || '')" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Número Peito</mat-label>
+        <input matInput [value]="inscricao?.numeroPeito" disabled />
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex justify-end gap-3 p-4 border-t border-gray-200">
+  <button mat-stroked-button color="warn" (click)="cancelar()">
+    Fechar
+  </button>
+  @if (modo !== 'visualizar') {
+    <button mat-flat-button color="primary" (click)="salvar()" [disabled]="form.invalid">
+      <mat-icon class="mr-1">save</mat-icon>
+      Salvar
+    </button>
+  }
+</mat-dialog-actions>
