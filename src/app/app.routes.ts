@@ -5,6 +5,7 @@ import { AuthLayout } from './core/layout/auth-layout/auth-layout';
 import { MainLayout } from './core/layout/main-layout/main-layout';
 import { Perfil } from './core/models/perfil.enum';
 import { authRoutes } from './features/auth/auth.routes';
+import { Categorias } from './features/pages/categorias/categorias';
 import { Corridas } from './features/pages/corridas/corridas';
 import { PainelPrincipal } from './features/pages/painel-principal/painel-principal';
 import { Usuarios } from './features/pages/usuarios/usuarios';
@@ -42,6 +43,12 @@ export const routes: Routes = [
         canActivate: [perfilGuard],
         data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
       },
+      {
+        path: 'categorias',
+        component: Categorias,
+        canActivate: [perfilGuard],
+        data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
+      }
     ]
   },
 

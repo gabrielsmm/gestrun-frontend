@@ -1,0 +1,53 @@
+<h2 mat-dialog-title class="text-2xl font-bold text-blue-600 ml-6 mt-3">
+  {{ data.categoria ? 'Editar Categoria' : 'Nova Categoria' }}
+</h2>
+
+<mat-dialog-content class="p-4">
+  <form [formGroup]="form" class="flex flex-col gap-6">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome" />
+      @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
+        <mat-error>Informe o nome</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Idade Mínima</mat-label>
+      <input matInput type="number" formControlName="idadeMin" />
+      @if (form.get('idadeMin')?.invalid && form.get('idadeMin')?.touched) {
+        <mat-error>Informe a idade mínima</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Idade Máxima</mat-label>
+      <input matInput type="number" formControlName="idadeMax" />
+      @if (form.get('idadeMax')?.invalid && form.get('idadeMax')?.touched) {
+        <mat-error>Informe a idade máxima</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Sexo</mat-label>
+      <mat-select formControlName="sexo">
+        <mat-option value="M">Masculino</mat-option>
+        <mat-option value="F">Feminino</mat-option>
+        <mat-option value="A">Ambos</mat-option>
+      </mat-select>
+      @if (form.get('sexo')?.invalid && form.get('sexo')?.touched) {
+        <mat-error>Selecione o sexo</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex justify-end gap-3 p-4 border-t border-gray-200">
+  <button mat-stroked-button color="warn" (click)="cancelar()">
+    Cancelar
+  </button>
+  <button mat-flat-button color="primary" (click)="salvar()" [disabled]="form.invalid">
+    <mat-icon class="mr-1">save</mat-icon>
+    Salvar
+  </button>
+</mat-dialog-actions>
