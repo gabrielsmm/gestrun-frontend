@@ -2,15 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Inscricao } from '../../../../core/models/inscricao.model';
 import { Paginacao } from '../../../../core/models/paginacao.model';
+import { Resultado } from '../../../../core/models/resultado.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class InscricoesService {
+export class ResultadosService {
 
-  private apiUrl = `${environment.apiUrl}/api/inscricoes`;
+  private apiUrl = `${environment.apiUrl}/api/resultados`;
 
   constructor(private http: HttpClient) {}
 
@@ -21,22 +21,22 @@ export class InscricoesService {
     filtro: string = '',
     ordem: string = 'id',
     direcao: string = 'ASC'
-  ): Observable<Paginacao<Inscricao>> {
-    return this.http.get<Paginacao<Inscricao>>(`${this.apiUrl}/corrida/${corridaId}`, {
+  ): Observable<Paginacao<Resultado>> {
+    return this.http.get<Paginacao<Resultado>>(`${this.apiUrl}/corrida/${corridaId}`, {
       params: { pagina, registrosPorPagina, filtro, ordem, direcao }
     });
   }
 
-  buscarPorCorridaENumeroPeito(corridaId: number, numeroPeito: number): Observable<Inscricao> {
-    return this.http.get<Inscricao>(`${this.apiUrl}/corrida/${corridaId}/numeroPeito/${numeroPeito}`);
+  criar(resultado: Resultado): Observable<Resultado> {
+    return this.http.post<Resultado>(this.apiUrl, resultado);
   }
 
-  criar(inscricao: Inscricao): Observable<Inscricao> {
-    return this.http.post<Inscricao>(this.apiUrl, inscricao);
+  atualizar(id: number, resultado: Resultado): Observable<Resultado> {
+    return this.http.put<Resultado>(`${this.apiUrl}/${id}`, resultado);
   }
 
-  atualizar(id: number, inscricao: Inscricao): Observable<Inscricao> {
-    return this.http.put<Inscricao>(`${this.apiUrl}/${id}`, inscricao);
+  atualizarLote(resultados: Resultado[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/lote`, resultados);
   }
 
   excluir(id: number): Observable<void> {

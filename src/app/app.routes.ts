@@ -9,6 +9,7 @@ import { Categorias } from './features/pages/categorias/categorias';
 import { Corridas } from './features/pages/corridas/corridas';
 import { Inscricoes } from './features/pages/inscricoes/inscricoes';
 import { PainelPrincipal } from './features/pages/painel-principal/painel-principal';
+import { Resultados } from './features/pages/resultados/resultados';
 import { Usuarios } from './features/pages/usuarios/usuarios';
 
 export const routes: Routes = [
@@ -53,6 +54,12 @@ export const routes: Routes = [
       {
         path: 'inscricoes',
         component: Inscricoes,
+        canActivate: [perfilGuard],
+        data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
+      },
+      {
+        path: 'resultados',
+        component: Resultados,
         canActivate: [perfilGuard],
         data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
       }
