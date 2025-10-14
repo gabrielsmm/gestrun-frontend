@@ -131,10 +131,14 @@ export class Resultados implements OnInit {
   }
 
   buscarInscricao(linha: LinhaResultado): void {
+    this.toastr.clear();
+
     if (!linha.numeroPeito || !this.corridaSelecionada || !this.corridaSelecionada.id) {
       this.limparLinha(linha);
       return;
     }
+
+    linha.numeroPeito = Number(linha.numeroPeito);
 
     const resultadoExistente = this.linhasResultados.find(
       l => l.numeroPeito === linha.numeroPeito && l.resultadoId
@@ -168,7 +172,7 @@ export class Resultados implements OnInit {
         error: (err) => {
           this.ngxUiLoaderService.stop();
           if (err.status === 404) {
-            this.toastr.warning('Inscrição não encontrada para o número de peito informado.');
+            this.toastr.warning('Inscrição não encontrada ou não está confirmada para o número de peito informado.');
           } else {
             this.toastr.error('Erro ao buscar inscrição.');
           }
@@ -189,6 +193,8 @@ export class Resultados implements OnInit {
   }
 
   salvarResultado(linha: LinhaResultado, index: number): void {
+    this.toastr.clear();
+
     if (!linha.inscricaoId || !linha.tempo) {
       this.toastr.warning('Preencha todos os campos para salvar.');
       return;
@@ -253,6 +259,8 @@ export class Resultados implements OnInit {
   }
 
   excluirResultado(linha: LinhaResultado): void {
+    this.toastr.clear();
+
     if (!linha.resultadoId) return;
 
     const dialogRef = this.dialog.open(ConfirmacaoDialog, {
