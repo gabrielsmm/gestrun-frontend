@@ -8,6 +8,17 @@
   appearance: textfield;
 }
 
+::ng-deep .form-field-compact .mat-mdc-form-field-subscript-wrapper,
+::ng-deep .form-field-compact .mat-mdc-form-field-bottom-align {
+  display: none !important;
+}
+
+::ng-deep .form-field-compact .mat-mdc-form-field-infix {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  min-height: 30px !important;
+}
+
 .input-compact {
   font-size: 0.95rem;
   width: 100%;

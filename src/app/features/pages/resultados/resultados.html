@@ -28,16 +28,16 @@
       <ng-container matColumnDef="numeroPeito">
         <th mat-header-cell *matHeaderCellDef class="largura-fixa-180"> Nº Peito </th>
         <td mat-cell *matCellDef="let linha" class="largura-fixa-180">
-          <mat-form-field appearance="fill" class="w-full mt-1">
+          <mat-form-field appearance="fill" class="w-full mt-1 mb-1 form-field-compact">
             <mat-icon matPrefix class="icon-compact">badge</mat-icon>
             <input matInput
-              type="number"
-              min="1"
-              step="1"
+              #numeroPeitoInput
+              type="text"
+              mask="0000"
               [(ngModel)]="linha.numeroPeito"
               [disabled]="linha.resultadoId"
-              (keyup.enter)="buscarInscricaoOuSalvar(linha)"
-              (blur)="buscarInscricaoOuSalvar(linha)"
+              (keyup.enter)="buscarInscricao(linha)"
+              (blur)="buscarInscricao(linha)"
               placeholder="Nº Peito"
               class="input-compact no-spinner"
             />
@@ -54,8 +54,8 @@
       <!-- Tempo -->
       <ng-container matColumnDef="tempo">
         <th mat-header-cell *matHeaderCellDef class="largura-fixa-180"> Tempo </th>
-        <td mat-cell *matCellDef="let linha" class="largura-fixa-180">
-          <mat-form-field appearance="fill" class="w-full mt-1">
+        <td mat-cell *matCellDef="let linha; let i = index;" class="largura-fixa-180">
+          <mat-form-field appearance="fill" class="w-full mt-1 mb-1 form-field-compact">
             <mat-icon matPrefix class="icon-compact">timer</mat-icon>
             <input matInput
               mask="00:00:00"
@@ -63,7 +63,7 @@
               [(ngModel)]="linha.tempo"
               placeholder="HH:MM:SS"
               [disabled]="!linha.inscricaoId"
-              (keyup.enter)="salvarResultado(linha)"
+              (keyup.enter)="salvarResultado(linha, i)"
               class="input-compact"
             />
           </mat-form-field>
@@ -71,18 +71,18 @@
       </ng-container>
       <!-- Posição Geral -->
       <ng-container matColumnDef="posicaoGeral">
-        <th mat-header-cell *matHeaderCellDef class="largura-maxima-300"> Posição </th>
-        <td mat-cell *matCellDef="let linha" class="largura-maxima-300">
+        <th mat-header-cell *matHeaderCellDef class="!text-center largura-maxima-300"> Posição Geral </th>
+        <td mat-cell *matCellDef="let linha" class="!text-center largura-maxima-300">
           {{ linha.posicaoGeral || '-' }}
         </td>
       </ng-container>
       <!-- Ações -->
       <ng-container matColumnDef="acoes">
         <th mat-header-cell *matHeaderCellDef class="!text-center largura-fixa-180"> Ações </th>
-        <td mat-cell *matCellDef="let linha" class="!text-center largura-fixa-180">
+        <td mat-cell *matCellDef="let linha; let i = index;" class="!text-center largura-fixa-180">
           <button mat-icon-button color="primary"
             [disabled]="!linha.inscricaoId"
-            (click)="salvarResultado(linha)">
+            (click)="salvarResultado(linha, i)">
             <mat-icon>save</mat-icon>
           </button>
           <button mat-icon-button color="warn"

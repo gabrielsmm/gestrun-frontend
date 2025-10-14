@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,6 +45,8 @@ interface LinhaResultado {
   styleUrl: './resultados.scss'
 })
 export class Resultados implements OnInit {
+
+  @ViewChildren('numeroPeitoInput') numeroPeitoInputs!: QueryList<ElementRef>;
 
   colunas = ['numeroPeito', 'nomeCorredor', 'tempo', 'posicaoGeral', 'acoes'];
   linhasResultados: LinhaResultado[] = [{}];
@@ -128,8 +130,11 @@ export class Resultados implements OnInit {
     }
   }
 
-  buscarInscricaoOuSalvar(linha: LinhaResultado): void {
-    if (!linha.numeroPeito || !this.corridaSelecionada || !this.corridaSelecionada.id) return;
+  buscarInscricao(linha: LinhaResultado): void {
+    if (!linha.numeroPeito || !this.corridaSelecionada || !this.corridaSelecionada.id) {
+      this.limparLinha(linha);
+      return;
+    }
 
     const resultadoExistente = this.linhasResultados.find(
       l => l.numeroPeito === linha.numeroPeito && l.resultadoId
@@ -183,7 +188,7 @@ export class Resultados implements OnInit {
     linha.resultadoId = undefined;
   }
 
-  salvarResultado(linha: LinhaResultado): void {
+  salvarResultado(linha: LinhaResultado, index: number): void {
     if (!linha.inscricaoId || !linha.tempo) {
       this.toastr.warning('Preencha todos os campos para salvar.');
       return;
@@ -235,6 +240,7 @@ export class Resultados implements OnInit {
         if (res) this.preencherLinhasResultados(res);
         this.toastr.success('Resultado salvo e posições atualizadas!');
         this.adicionarNovaLinha();
+        this.focarProximoInput(index);
       },
       error: () => {
         this.ngxUiLoaderService.stop();
@@ -346,6 +352,15 @@ export class Resultados implements OnInit {
     if (ultima && ultima.numeroPeito) {
       this.linhasResultados = [...this.linhasResultados, {}];
     }
+  }
+
+  focarProximoInput(index: number): void {
+    setTimeout(() => {
+      const inputs = this.numeroPeitoInputs.toArray();
+      if (inputs[index + 1]) {
+        inputs[index + 1].nativeElement.focus();
+      }
+    });
   }
 
 }
