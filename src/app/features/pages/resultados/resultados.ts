@@ -49,7 +49,7 @@ export class Resultados implements OnInit {
 
   @ViewChildren('numeroPeitoInput') numeroPeitoInputs!: QueryList<ElementRef>;
 
-  colunas = ['numeroPeito', 'nomeCorredor', 'tempo', 'posicaoGeral', 'acoes'];
+  colunas = ['posicaoGeral', 'numeroPeito', 'tempo', 'nomeCorredor', 'acoes'];
   linhasResultados: LinhaResultado[] = [{}];
 
   corridas: Corrida[] = [];
@@ -215,6 +215,11 @@ export class Resultados implements OnInit {
       return;
     }
 
+    if (!this.validarTempo(linha.tempo!)) {
+      this.toastr.error('Tempo inválido! Informe no formato HH:MM:SS, minutos e segundos entre 0 e 59.');
+      return;
+    }
+
     this.ngxUiLoaderService.start();
 
     // Atualiza posições antes de salvar
@@ -339,6 +344,22 @@ export class Resultados implements OnInit {
     });
   }
 
+  private adicionarNovaLinha(): void {
+    const ultima = this.linhasResultados[this.linhasResultados.length - 1];
+    if (ultima && ultima.numeroPeito) {
+      this.linhasResultados = [...this.linhasResultados, {}];
+    }
+  }
+
+  private focarProximoInput(index: number): void {
+    setTimeout(() => {
+      const inputs = this.numeroPeitoInputs.toArray();
+      if (inputs[index + 1]) {
+        inputs[index + 1].nativeElement.focus();
+      }
+    });
+  }
+
   private atualizarPosicoesGerais(): void {
     // Ordena por tempo (menor tempo = melhor posição)
     const linhasValidas = this.linhasResultados.filter(l => l.tempo && l.inscricaoId);
@@ -370,20 +391,14 @@ export class Resultados implements OnInit {
     return 0;
   }
 
-  adicionarNovaLinha(): void {
-    const ultima = this.linhasResultados[this.linhasResultados.length - 1];
-    if (ultima && ultima.numeroPeito) {
-      this.linhasResultados = [...this.linhasResultados, {}];
-    }
-  }
-
-  focarProximoInput(index: number): void {
-    setTimeout(() => {
-      const inputs = this.numeroPeitoInputs.toArray();
-      if (inputs[index + 1]) {
-        inputs[index + 1].nativeElement.focus();
-      }
-    });
+  private validarTempo(tempo: string): boolean {
+    if (!tempo) return false;
+    const partes = tempo.split(':').map(Number);
+    if (partes.length !== 3) return false;
+    const [hh, mm, ss] = partes;
+    if (hh < 0 || hh > 23 || mm < 0 || ss < 0) return false;
+    if (mm > 59 || ss > 59) return false;
+    return true;
   }
 
 }
