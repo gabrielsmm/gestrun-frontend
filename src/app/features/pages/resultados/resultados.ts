@@ -15,6 +15,7 @@ import { of, switchMap } from 'rxjs';
 import { Corrida } from '../../../core/models/corrida.model';
 import { Resultado } from '../../../core/models/resultado.model';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
+import { CorridaSelecionadaService } from '../../../shared/services/corrida-selecionada.service';
 import { CorridasService } from '../corridas/service/corridas.service';
 import { InscricoesService } from '../inscricoes/service/inscricoes.service';
 import { ResultadosService } from './service/resultados.service';
@@ -62,11 +63,19 @@ export class Resultados implements OnInit {
     private corridasService: CorridasService,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private corridaSelecionadaService: CorridaSelecionadaService
   ) {}
 
   ngOnInit(): void {
     this.carregarCorridas();
+
+    const corridaSalva = this.corridaSelecionadaService.obterCorrida();
+    if (corridaSalva) {
+      this.corridaSelecionada = corridaSalva;
+      this.corridaSelecionadaNome = corridaSalva.nome;
+      this.carregarResultados();
+    }
   }
 
   carregarCorridas(): void {
@@ -89,7 +98,13 @@ export class Resultados implements OnInit {
   selecionarCorrida(nome: string): void {
     this.corridaSelecionada = this.corridas.find(c => c.nome === nome) || null;
     this.corridaSelecionadaNome = nome;
+    if (this.corridaSelecionada) {
+      this.corridaSelecionadaService.salvarCorrida(this.corridaSelecionada);
+    }
+    this.carregarResultados();
+  }
 
+  carregarResultados(): void {
     if (this.corridaSelecionada?.id) {
       this.ngxUiLoaderService.start();
 

@@ -16,6 +16,7 @@ import { Categoria } from '../../../core/models/categoria.model';
 import { Corrida } from '../../../core/models/corrida.model';
 import { SexoCategoria } from '../../../core/models/sexo-categoria.enum';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
+import { CorridaSelecionadaService } from '../../../shared/services/corrida-selecionada.service';
 import { CorridasService } from '../corridas/service/corridas.service';
 import { CategoriaForm } from './categoria-form/categoria-form';
 import { CategoriasService } from './service/categorias.service';
@@ -57,7 +58,8 @@ export class Categorias {
     private corridasService: CorridasService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private corridaSelecionadaService: CorridaSelecionadaService
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +73,13 @@ export class Categorias {
     });
 
     this.carregarCorridas();
+
+    const corridaSalva = this.corridaSelecionadaService.obterCorrida();
+    if (corridaSalva) {
+      this.corridaSelecionada = corridaSalva;
+      this.corridaSelecionadaNome = corridaSalva.nome;
+      this.carregarCategorias();
+    }
   }
 
   carregarCorridas(): void {
@@ -94,6 +103,9 @@ export class Categorias {
     this.corridaSelecionada = this.corridas.find(c => c.nome === nome) || null;
     this.corridaSelecionadaNome = nome;
     this.pagina = 0;
+    if (this.corridaSelecionada) {
+      this.corridaSelecionadaService.salvarCorrida(this.corridaSelecionada);
+    }
     this.carregarCategorias();
   }
 
