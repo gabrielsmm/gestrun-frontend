@@ -16,8 +16,10 @@
 
   <mat-form-field appearance="fill" class="w-full">
     <mat-label>Senha</mat-label>
-    <input matInput type="password" formControlName="senha" required />
-    <mat-icon matSuffix>lock</mat-icon>
+    <input matInput [type]="senhaVisivel ? 'text' : 'password'" formControlName="senha" required />
+    <button mat-icon-button matSuffix type="button" (click)="toggleSenhaVisivel()" tabindex="-1">
+      <mat-icon>{{ senhaVisivel ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
     @if (loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched) {
       <mat-error>Senha obrigatória</mat-error>
     }

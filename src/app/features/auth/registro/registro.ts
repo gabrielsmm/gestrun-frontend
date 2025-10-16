@@ -40,6 +40,9 @@ export class Registro {
 
   registroForm: FormGroup;
 
+  senhaVisivel = false;
+  confirmacaoSenhaVisivel = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -84,6 +87,14 @@ export class Registro {
         }
       });
     }
+  }
+
+  toggleSenhaVisivel() {
+    this.senhaVisivel = !this.senhaVisivel;
+  }
+
+  toggleConfirmacaoSenhaVisivel() {
+    this.confirmacaoSenhaVisivel = !this.confirmacaoSenhaVisivel;
   }
 
 }

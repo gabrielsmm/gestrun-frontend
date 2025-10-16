@@ -29,6 +29,8 @@ export class Login {
 
   loginForm: FormGroup;
 
+  senhaVisivel = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -63,6 +65,10 @@ export class Login {
         }
       });
     }
+  }
+
+  toggleSenhaVisivel() {
+    this.senhaVisivel = !this.senhaVisivel;
   }
 
 }
