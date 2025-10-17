@@ -77,6 +77,13 @@ export class PainelPrincipal {
       icone: 'emoji_events',
       rota: '/resultados',
       perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR]
+    },
+    {
+      titulo: 'Relatórios',
+      descricao: 'Gere relatórios detalhados',
+      icone: 'bar_chart',
+      rota: '/relatorios',
+      perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR]
     }
   ];
 

@@ -3,8 +3,8 @@ import { Component, inject, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Perfil } from '../../models/perfil.enum';
-import { AuthService } from './../../services/auth.service';
 import { Usuario } from '../../models/usuario.model';
+import { AuthService } from './../../services/auth.service';
 
 interface itemNavegacao {
   descricao: string;
@@ -69,6 +69,12 @@ export class Sidenav {
       rota: '/resultados',
       perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR]
     },
+    {
+      descricao: 'Relatórios',
+      icone: 'bar_chart',
+      rota: '/relatorios',
+      perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR]
+    }
   ];
 
   constructor() {

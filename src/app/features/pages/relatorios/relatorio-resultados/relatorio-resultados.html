@@ -1,0 +1,48 @@
+<div class="p-6 max-w-3xl mx-auto flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-bold text-gray-700">Relatório de Resultados</h2>
+    <button mat-raised-button color="primary" (click)="gerarRelatorio()" class="w-[200px]">
+      <mat-icon class="mr-2">print</mat-icon>
+      Gerar Relatório
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <mat-form-field appearance="fill" class="flex-1 min-w-[200px]">
+      <mat-label>Tipo de Relatório</mat-label>
+      <mat-select [(ngModel)]="tipo" name="tipo" required>
+        @for (t of tiposRelatorio; track t.tipo) {
+          <mat-option [value]="t.tipo">{{ t.descricao }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1 min-w-[120px]">
+      <mat-label>Formato</mat-label>
+      <mat-select [(ngModel)]="formato" name="formato" required>
+        <mat-option value="pdf">PDF</mat-option>
+        <mat-option value="xlsx">Excel</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="grid grid-cols-1 gap-4">
+    <mat-form-field appearance="fill" class="min-w-[200px]">
+      <mat-label>Buscar Corrida</mat-label>
+      <input
+        type="text"
+        matInput
+        [matAutocomplete]="auto"
+        [(ngModel)]="corridaSelecionadaNome"
+        (input)="filtrarCorridas($event.target.value)"
+        placeholder="Digite o nome da corrida"
+        required
+      >
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarCorrida($event.option.value)">
+        @for (corrida of corridasFiltradas; track corrida.id) {
+          <mat-option [value]="corrida.nome">
+            {{ corrida.nome }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+</div>

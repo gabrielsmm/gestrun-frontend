@@ -5,7 +5,7 @@
       @if (podeAcessar(item)) {
         <a [routerLink]="item.rota"
           routerLinkActive="bg-blue-100 text-blue-600"
-          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLinkActiveOptions]="item.rota === '/relatorios' ? { exact: false } : { exact: true }"
           class="flex items-center px-4 py-3 hover:bg-blue-50 transition-colors duration-200 rounded-md cursor-pointer"
           [ngClass]="{ 'justify-center': !opened }">
 

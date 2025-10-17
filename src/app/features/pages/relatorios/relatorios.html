@@ -1,0 +1,14 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-gray-700">Relatórios</h2>
+
+  <div class="p-4">
+    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+      <mat-tab label="Corridas" [disabled]="true"></mat-tab>
+      <mat-tab label="Inscrições" [disabled]="true"></mat-tab>
+      <mat-tab label="Resultados"></mat-tab>
+    </mat-tab-group>
+    <section class="mt-6">
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+</div>

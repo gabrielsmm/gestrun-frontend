@@ -9,6 +9,7 @@ import { Categorias } from './features/pages/categorias/categorias';
 import { Corridas } from './features/pages/corridas/corridas';
 import { Inscricoes } from './features/pages/inscricoes/inscricoes';
 import { PainelPrincipal } from './features/pages/painel-principal/painel-principal';
+import { relatoriosRoutes } from './features/pages/relatorios/relatorios.routes';
 import { Resultados } from './features/pages/resultados/resultados';
 import { Usuarios } from './features/pages/usuarios/usuarios';
 
@@ -60,6 +61,12 @@ export const routes: Routes = [
       {
         path: 'resultados',
         component: Resultados,
+        canActivate: [perfilGuard],
+        data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
+      },
+      {
+        path: 'relatorios',
+        children: relatoriosRoutes,
         canActivate: [perfilGuard],
         data: { perfisPermitidos: [Perfil.ADMIN, Perfil.ORGANIZADOR] }
       }
