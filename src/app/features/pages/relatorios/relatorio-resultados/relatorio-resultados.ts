@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Corrida } from '../../../../core/models/corrida.model';
+import { CorridaSelecionadaService } from '../../../../shared/services/corrida-selecionada.service';
 import { CorridasService } from '../../corridas/service/corridas.service';
 import { RelatorioService } from '../service/relatorio.service';
 
@@ -46,11 +47,18 @@ export class RelatorioResultados {
     private relatorioService: RelatorioService,
     private corridasService: CorridasService,
     private toastr: ToastrService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private corridaSelecionadaService: CorridaSelecionadaService
   ) {}
 
   ngOnInit() {
     this.carregarCorridas();
+
+    const corridaSalva = this.corridaSelecionadaService.obterCorrida();
+    if (corridaSalva) {
+      this.corridaId = corridaSalva.id;
+      this.corridaSelecionadaNome = corridaSalva.nome;
+    }
   }
 
   carregarCorridas(): void {
@@ -60,7 +68,7 @@ export class RelatorioResultados {
         this.corridasFiltradas = this.corridas;
       },
       error: (err) => {
-        this.toastr.error('Erro ao carregar corridas.', 'Erro');
+        this.toastr.error('Erro ao carregar corridas.');
       }
     });
   }
@@ -79,16 +87,20 @@ export class RelatorioResultados {
   gerarRelatorio() {
     this.toastr.clear();
 
-    // console.log(this.corridaId, this.tipo, this.formato);
-
     if (!this.corridaId) {
-      this.toastr.error('Selecione uma corrida para gerar o relatório.', 'Erro');
+      this.toastr.error('Selecione uma corrida para gerar o relatório.');
       return;
     }
 
     switch (this.tipo) {
       case 1:
         this.gerarRelatorioGeral();
+        break;
+      case 2:
+        this.toastr.info('Relatório por Categoria ainda não implementado.');
+        break;
+      case 3:
+        this.toastr.info('Relatório Top 3 / Ranking Geral ainda não implementado.');
         break;
     }
   }
@@ -107,7 +119,7 @@ export class RelatorioResultados {
       },
       error: () => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao exportar relatório.', 'Erro');
+        this.toastr.error('Erro ao exportar relatório.');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
