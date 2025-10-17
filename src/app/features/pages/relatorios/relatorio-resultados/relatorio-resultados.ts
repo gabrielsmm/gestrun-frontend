@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Corrida } from '../../../../core/models/corrida.model';
 import { CorridaSelecionadaService } from '../../../../shared/services/corrida-selecionada.service';
+import { downloadBlob } from '../../../../shared/utils/download.util';
 import { CorridasService } from '../../corridas/service/corridas.service';
 import { RelatorioService } from '../service/relatorio.service';
 
@@ -110,16 +111,15 @@ export class RelatorioResultados {
 
     this.relatorioService.gerarResultadosGeral(this.corridaId!, this.formato).subscribe({
       next: (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `resultado_geral.${this.formato}`;
-        a.click();
-        window.URL.revokeObjectURL(url);
+        downloadBlob(blob, `resultado_geral.${this.formato}`);
       },
-      error: () => {
+      error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao exportar relatório.');
+        if (err.status === 404) {
+          this.toastr.warning('Relatório sem dados para os filtros informados.');
+        } else {
+          this.toastr.error('Erro ao exportar relatório.');
+        }
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
