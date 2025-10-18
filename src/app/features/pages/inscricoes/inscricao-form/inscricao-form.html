@@ -71,7 +71,9 @@
 
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Número Peito</mat-label>
-        <input matInput type="number" formControlName="numeroPeito" />
+        <input matInput formControlName="numeroPeito"
+               type="text" maxlength="4" inputmode="numeric" pattern="[0-9]*"
+               (keypress)="apenasNumeros($event)" />
       </mat-form-field>
 
       <!-- Informações relevantes apenas para consulta -->

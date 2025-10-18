@@ -68,7 +68,7 @@ export class InscricaoForm {
     } else if (this.modo === 'editar') {
       this.form = this.fb.group({
         status: [this.inscricao?.status || 'PENDENTE', Validators.required],
-        numeroPeito: [this.inscricao?.numeroPeito || '', Validators.required]
+        numeroPeito: [this.inscricao?.numeroPeito || '', Validators.pattern(/^\d{1,4}$/)]
       });
     } else {
       this.form = this.fb.group({});
@@ -76,19 +76,31 @@ export class InscricaoForm {
   }
 
   salvar(): void {
+    this.toastr.clear();
     if (this.form.invalid) return;
 
     if (this.modo === 'criar') {
-      const inscricaoData = {
+      const inscricaoData: Inscricao = {
         ...this.form.value,
         corridaId: this.data.corridaId
       };
       this.criar(inscricaoData);
     } else if (this.modo === 'editar' && this.inscricao) {
-      const inscricaoData = {
+      const inscricaoData: Inscricao = {
         ...this.inscricao,
         ...this.form.value
       };
+
+      if (inscricaoData.numeroPeito && inscricaoData.status === StatusInscricao.PENDENTE.toUpperCase()) {
+        this.toastr.warning('Número de Peito informado, considere alterar o Status para "Confirmada"', 'Atenção');
+        return;
+      }
+
+      if (!inscricaoData.numeroPeito && inscricaoData.status === StatusInscricao.CONFIRMADA.toUpperCase()) {
+        this.toastr.warning('Para confirmar a inscrição, o Número de Peito deve ser informado.', 'Atenção');
+        return;
+      }
+
       this.atualizar(this.inscricao.id, inscricaoData);
     }
   }
@@ -135,6 +147,13 @@ export class InscricaoForm {
 
   getDescricaoStatus(status: string): string {
     return StatusInscricao[status as keyof typeof StatusInscricao] || status;
+  }
+
+  apenasNumeros(event: KeyboardEvent) {
+    const char = event.key;
+    if (char < '0' || char > '9') {
+      event.preventDefault();
+    }
   }
 
 }
