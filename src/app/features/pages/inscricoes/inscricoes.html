@@ -43,7 +43,7 @@
         <td mat-cell *matCellDef="let inscricao"> {{ inscricao.nomeCorredor }} </td>
       </ng-container>
       <ng-container matColumnDef="documento">
-        <th mat-header-cell *matHeaderCellDef> Documento </th>
+        <th mat-header-cell *matHeaderCellDef> Documento (CPF) </th>
         <td mat-cell *matCellDef="let inscricao"> {{ inscricao.documento | mask:'000.000.000-00' }} </td>
       </ng-container>
       <ng-container matColumnDef="dataNascimento">

@@ -14,6 +14,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Inscricao } from '../../../../core/models/inscricao.model';
 import { SexoInscricao } from '../../../../core/models/sexo-inscricao.enum';
 import { StatusInscricao } from '../../../../core/models/status-inscricao.enum';
+import { cpfValidador } from '../../../../shared/utils/cpf-validador.util';
 import { InscricoesService } from '../service/inscricoes.service';
 
 @Component({
@@ -58,11 +59,11 @@ export class InscricaoForm {
     if (this.modo === 'criar') {
       this.form = this.fb.group({
         nomeCorredor: ['', Validators.required],
-        documento: ['', Validators.required],
+        documento: ['', [cpfValidador]],
         dataNascimento: ['', Validators.required],
         sexo: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        telefone: ['', Validators.required]
+        email: ['', Validators.email],
+        telefone: ['']
       });
     } else if (this.modo === 'editar') {
       this.form = this.fb.group({

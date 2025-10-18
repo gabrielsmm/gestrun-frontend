@@ -15,10 +15,10 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Documento</mat-label>
+        <mat-label>Documento (CPF)</mat-label>
         <input matInput formControlName="documento" mask="000.000.000-00" />
         @if (form.get('documento')?.invalid && form.get('documento')?.touched) {
-          <mat-error>Informe o documento</mat-error>
+          <mat-error>Documento inválido</mat-error>
         }
       </mat-form-field>
 
@@ -45,7 +45,7 @@
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" />
         @if (form.get('email')?.invalid && form.get('email')?.touched) {
-          <mat-error>Informe o email</mat-error>
+          <mat-error>Email inválido</mat-error>
         }
       </mat-form-field>
 
@@ -53,7 +53,7 @@
         <mat-label>Telefone</mat-label>
         <input matInput formControlName="telefone" mask="(00) 00000-0000" />
         @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) {
-          <mat-error>Informe o telefone</mat-error>
+          <mat-error>Telefone inválido</mat-error>
         }
       </mat-form-field>
     }
