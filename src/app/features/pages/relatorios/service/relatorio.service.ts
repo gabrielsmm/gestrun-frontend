@@ -18,4 +18,11 @@ export class RelatorioService {
     });
   }
 
+  gerarResultadosPorCategoria(corridaId: number, categoriaId: number, formato: 'pdf' | 'xlsx') {
+    return this.http.get(`${this.apiUrl}/resultados/categoria`, {
+      params: { corridaId, categoriaId, formato },
+      responseType: 'blob'
+    });
+  }
+
 }

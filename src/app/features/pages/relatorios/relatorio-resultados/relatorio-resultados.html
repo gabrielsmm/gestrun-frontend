@@ -10,7 +10,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <mat-form-field appearance="fill" class="flex-1 min-w-[200px]">
       <mat-label>Tipo de Relatório</mat-label>
-      <mat-select [(ngModel)]="tipo" name="tipo" required>
+      <mat-select [(ngModel)]="tipo" name="tipo" (ngModelChange)="onTipoChange($event)" required>
         @for (t of tiposRelatorio; track t.tipo) {
           <mat-option [value]="t.tipo">{{ t.descricao }}</mat-option>
         }
@@ -45,4 +45,16 @@
       </mat-autocomplete>
     </mat-form-field>
   </div>
+  @if (tipo === 2) {
+    <div class="grid grid-cols-1 gap-4">
+      <mat-form-field appearance="fill" class="flex-1 min-w-[200px]">
+        <mat-label>Categoria</mat-label>
+        <mat-select [(ngModel)]="categoriaId" name="categoria" required>
+          @for (c of categorias; track c.id) {
+            <mat-option [value]="c.id">{{ c.nome }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  }
 </div>
