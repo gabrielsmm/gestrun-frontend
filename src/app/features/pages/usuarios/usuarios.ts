@@ -69,7 +69,6 @@ export class Usuarios {
       .listar(this.pagina, this.registrosPorPagina, this.filtro)
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.usuarios = res.conteudo || [];
           this.totalRegistros = res.totalElementos;
         },

@@ -67,7 +67,6 @@ export class Corridas implements OnInit {
       .listarPorOrganizadorPaginado(this.pagina, this.registrosPorPagina, this.filtro)
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.corridas = res.conteudo || [];
           this.totalRegistros = res.totalElementos;
         },

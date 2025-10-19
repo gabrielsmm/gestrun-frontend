@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { ToastrService } from 'ngx-toastr';
@@ -31,6 +32,7 @@ import { InscricoesService } from '../service/inscricoes.service';
     MatDialogContent,
     MatIconModule,
     MatButtonModule,
+    MatRadioModule,
     NgxMaskDirective,
     NgxMaskPipe
   ],
@@ -63,16 +65,28 @@ export class InscricaoForm {
         dataNascimento: ['', Validators.required],
         sexo: ['', Validators.required],
         email: ['', Validators.email],
-        telefone: ['']
+        telefone: [''],
+        tipoTelefone: ['celular']
       });
     } else if (this.modo === 'editar') {
       this.form = this.fb.group({
         status: [this.inscricao?.status || 'PENDENTE', Validators.required],
-        numeroPeito: [this.inscricao?.numeroPeito || '', Validators.pattern(/^\d{1,4}$/)]
+        numeroPeito: [this.inscricao?.numeroPeito || '', Validators.pattern(/^[\d]{1,4}$/)],
+        nomeCorredor: [this.inscricao?.nomeCorredor || '', Validators.required],
+        documento: [this.inscricao?.documento || '', [cpfValidador]],
+        dataNascimento: [this.inscricao?.dataNascimento || '', Validators.required],
+        sexo: [this.inscricao?.sexo || '', Validators.required],
+        email: [this.inscricao?.email || '', Validators.email],
+        telefone: [this.inscricao?.telefone || ''],
+        tipoTelefone: [this.inscricao?.telefone.length == 10 ? 'fixo' : 'celular']
       });
     } else {
       this.form = this.fb.group({});
     }
+
+    this.form.get('tipoTelefone')?.valueChanges.subscribe(() => {
+      this.form.get('telefone')?.setValue('');
+    });
   }
 
   salvar(): void {
@@ -111,9 +125,13 @@ export class InscricaoForm {
       next: () => {
         this.dialogRef.close(true);
       },
-      error: () => {
+      error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao criar inscrição. Tente novamente mais tarde.', 'Erro');
+        if (err.status == 400 && err.error?.erros) {
+          this.toastr.error(err.error.erros.map((e: any) => e.mensagem).join(' '), 'Erro');
+        } else {
+          this.toastr.error('Erro ao criar inscrição. Tente novamente mais tarde.', 'Erro');
+        }
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
@@ -127,9 +145,15 @@ export class InscricaoForm {
       next: () => {
         this.dialogRef.close(true);
       },
-      error: () => {
+      error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao atualizar inscrição. Tente novamente mais tarde.', 'Erro');
+        if (err.status == 400 && err.error?.erros) {
+          this.toastr.error(err.error.erros.map((e: any) => e.mensagem).join(' '), 'Erro');
+        } else if (err.status === 400 && err.error?.mensagem) {
+          this.toastr.error(err.error.mensagem, 'Erro');
+        } else {
+          this.toastr.error('Erro ao atualizar inscrição. Tente novamente mais tarde.', 'Erro');
+        }
       },
       complete: () => {
         this.ngxUiLoaderService.stop();

@@ -4,8 +4,28 @@
 
 <mat-dialog-content class="p-4">
   <form [formGroup]="form" class="flex flex-col gap-6">
-    <!-- Modo criar -->
-    @if (modo === 'criar') {
+    <!-- Modo criar ou editar -->
+    @if (modo === 'criar' || modo === 'editar') {
+
+      <!-- Modo editar -->
+      @if (modo === 'editar') {
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="PENDENTE">Pendente</mat-option>
+            <mat-option value="CONFIRMADA">Confirmada</mat-option>
+            <mat-option value="CANCELADA">Cancelada</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Número Peito</mat-label>
+          <input matInput formControlName="numeroPeito"
+                type="text" maxlength="4" inputmode="numeric" pattern="[0-9]*"
+                (keypress)="apenasNumeros($event)" />
+        </mat-form-field>
+      }
+
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Nome</mat-label>
         <input matInput formControlName="nomeCorredor" />
@@ -49,40 +69,21 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Telefone</mat-label>
-        <input matInput formControlName="telefone" mask="(00) 00000-0000" />
-        @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) {
-          <mat-error>Telefone inválido</mat-error>
-        }
-      </mat-form-field>
-    }
-
-    <!-- Modo editar -->
-    @if (modo === 'editar') {
-      <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Status</mat-label>
-        <mat-select formControlName="status">
-          <mat-option value="PENDENTE">Pendente</mat-option>
-          <mat-option value="CONFIRMADA">Confirmada</mat-option>
-          <mat-option value="CANCELADA">Cancelada</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Número Peito</mat-label>
-        <input matInput formControlName="numeroPeito"
-               type="text" maxlength="4" inputmode="numeric" pattern="[0-9]*"
-               (keypress)="apenasNumeros($event)" />
-      </mat-form-field>
-
-      <!-- Informações relevantes apenas para consulta -->
-      <div class="text-gray-600">Nome: {{ inscricao?.nomeCorredor }}</div>
-      <div class="text-gray-600">Documento: {{ (inscricao?.documento || '') | mask:'000.000.000-00' }}</div>
-      <div class="text-gray-600">Data de Nascimento: {{ inscricao?.dataNascimento | date:'dd/MM/yyyy' }}</div>
-      <div class="text-gray-600">Sexo: {{ getDescricaoSexo(inscricao?.sexo || '') }}</div>
-      <div class="text-gray-600">Email: {{ inscricao?.email }}</div>
-      <div class="text-gray-600">Telefone: {{ (inscricao?.telefone || '') | mask:'(00) 00000-0000' }}</div>
+      <div class="flex flex-col gap-2">
+        <mat-label class="mb-1">Tipo de Telefone</mat-label>
+        <mat-radio-group formControlName="tipoTelefone" class="mb-2" style="display: flex; flex-direction: row; gap: 1rem;">
+          <mat-radio-button value="celular">Celular</mat-radio-button>
+          <mat-radio-button value="fixo">Fixo</mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Telefone</mat-label>
+          <input matInput formControlName="telefone"
+                 [mask]="form.get('tipoTelefone')?.value === 'fixo' ? '(00) 0000-0000' : '(00) 00000-0000'" />
+          @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) {
+            <mat-error>Telefone inválido</mat-error>
+          }
+        </mat-form-field>
+      </div>
     }
 
     <!-- Modo visualizar -->
@@ -114,7 +115,10 @@
 
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Telefone</mat-label>
-        <input matInput [value]="(inscricao?.telefone || '') | mask:'(00) 00000-0000'" disabled />
+        <input matInput
+               [value]="(inscricao?.telefone || '')
+                        | mask: inscricao?.telefone?.length === 10 ? '(00) 0000-0000' : '(00) 00000-0000'"
+               disabled />
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="w-full">
