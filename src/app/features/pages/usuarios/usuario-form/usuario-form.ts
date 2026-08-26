@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Usuario } from '../../../../core/models/usuario.model';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { UsuariosService } from '../service/usuarios.service';
 import { Perfil } from './../../../../core/models/perfil.enum';
 
@@ -41,6 +42,7 @@ export class UsuarioForm {
     private usuariosService: UsuariosService,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService,
     private dialogRef: MatDialogRef<UsuarioForm>,
     @Inject(MAT_DIALOG_DATA) public usuario: Usuario | null
   ) {
@@ -72,8 +74,7 @@ export class UsuarioForm {
       },
       error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao atualizar o usuário. Tente novamente mais tarde.', 'Erro');
-        console.error('Erro ao atualizar usuário:', err);
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao atualizar o usuário. Tente novamente mais tarde.'), 'Erro');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
@@ -90,8 +91,7 @@ export class UsuarioForm {
       },
       error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao criar o usuário. Tente novamente mais tarde.', 'Erro');
-        console.error('Erro ao criar usuário:', err);
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao criar o usuário. Tente novamente mais tarde.'), 'Erro');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();

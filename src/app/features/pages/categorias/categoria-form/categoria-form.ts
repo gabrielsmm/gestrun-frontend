@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categoria } from '../../../../core/models/categoria.model';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { CategoriasService } from '../service/categorias.service';
 import { SexoCategoria } from './../../../../core/models/sexo-categoria.enum';
 
@@ -42,6 +43,7 @@ export class CategoriaForm {
     private categoriasService: CategoriasService,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService,
     private dialogRef: MatDialogRef<CategoriaForm>,
     @Inject(MAT_DIALOG_DATA) public data: { categoria: Categoria | null, corridaId: number }
   ) {
@@ -76,9 +78,9 @@ export class CategoriaForm {
       next: () => {
         this.dialogRef.close(true);
       },
-      error: () => {
+      error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao atualizar a categoria. Tente novamente mais tarde.', 'Erro');
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao atualizar a categoria. Tente novamente mais tarde.'), 'Erro');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
@@ -93,9 +95,9 @@ export class CategoriaForm {
       next: () => {
         this.dialogRef.close(true);
       },
-      error: () => {
+      error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao criar a categoria. Tente novamente mais tarde.', 'Erro');
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao criar a categoria. Tente novamente mais tarde.'), 'Erro');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();

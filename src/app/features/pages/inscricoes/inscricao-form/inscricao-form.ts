@@ -15,6 +15,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Inscricao } from '../../../../core/models/inscricao.model';
 import { SexoInscricao } from '../../../../core/models/sexo-inscricao.enum';
 import { StatusInscricao } from '../../../../core/models/status-inscricao.enum';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { cpfValidador } from '../../../../shared/utils/cpf-validador.util';
 import { InscricoesService } from '../service/inscricoes.service';
 
@@ -52,6 +53,7 @@ export class InscricaoForm {
     private inscricoesService: InscricoesService,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService,
     private dialogRef: MatDialogRef<InscricaoForm>,
     @Inject(MAT_DIALOG_DATA) public data: { inscricao: Inscricao | null, corridaId: number, modo: 'criar' | 'editar' | 'visualizar' }
   ) {
@@ -127,11 +129,7 @@ export class InscricaoForm {
       },
       error: (err) => {
         this.ngxUiLoaderService.stop();
-        if (err.status == 400 && err.error?.erros) {
-          this.toastr.error(err.error.erros.map((e: any) => e.mensagem).join(' '), 'Erro');
-        } else {
-          this.toastr.error('Erro ao criar inscrição. Tente novamente mais tarde.', 'Erro');
-        }
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao criar inscrição. Tente novamente mais tarde.'), 'Erro');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
@@ -147,13 +145,7 @@ export class InscricaoForm {
       },
       error: (err) => {
         this.ngxUiLoaderService.stop();
-        if (err.status == 400 && err.error?.erros) {
-          this.toastr.error(err.error.erros.map((e: any) => e.mensagem).join(' '), 'Erro');
-        } else if (err.status === 400 && err.error?.mensagem) {
-          this.toastr.error(err.error.mensagem, 'Erro');
-        } else {
-          this.toastr.error('Erro ao atualizar inscrição. Tente novamente mais tarde.', 'Erro');
-        }
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao atualizar inscrição. Tente novamente mais tarde.'), 'Erro');
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
