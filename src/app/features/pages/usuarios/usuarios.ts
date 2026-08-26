@@ -9,6 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Perfil } from '../../../core/models/perfil.enum';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
 import { Usuario } from './../../../core/models/usuario.model';
 import { UsuariosService } from './service/usuarios.service';
@@ -39,6 +40,8 @@ export class Usuarios {
   registrosPorPagina = 10;
   pagina = 0;
   filtro = '';
+  carregando = false;
+  erroCarregamento = false;
 
   private filtroSubject = new Subject<string>();
 
@@ -46,7 +49,8 @@ export class Usuarios {
     private usuariosService: UsuariosService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +67,8 @@ export class Usuarios {
   }
 
   carregarUsuarios(): void {
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.ngxUiLoaderService.start();
 
     this.usuariosService
@@ -73,11 +79,13 @@ export class Usuarios {
           this.totalRegistros = res.totalElementos;
         },
         error: (err) => {
+          this.erroCarregamento = true;
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao carregar usuários. Tente novamente mais tarde.', 'Erro');
-          console.error('Erro ao carregar usuários:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar usuários. Tente novamente mais tarde.'), 'Erro');
         },
         complete: () => {
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
         }
       });
@@ -129,8 +137,7 @@ export class Usuarios {
           },
           error: (err) => {
             this.ngxUiLoaderService.stop();
-            this.toastr.error('Erro ao excluir usuário. Tente novamente mais tarde.', 'Erro');
-            console.error('Erro ao excluir usuário:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao excluir usuário. Tente novamente mais tarde.'), 'Erro');
           },
           complete: () => {
             this.ngxUiLoaderService.stop();

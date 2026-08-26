@@ -22,7 +22,14 @@
     </mat-form-field>
   </div>
 
-  @if (corridaSelecionada?.id) {
+  @if (carregando) {
+    <div class="text-center text-gray-500 py-8">Carregando resultados...</div>
+  } @else if (erroCarregamento) {
+    <div class="text-center text-gray-600 py-8">
+      <p>Não foi possível carregar os resultados.</p>
+      <button mat-stroked-button color="primary" class="mt-3" (click)="carregarResultados()">Tentar novamente</button>
+    </div>
+  } @else if (corridaSelecionada?.id) {
     <table mat-table [dataSource]="linhasResultados" class="w-full mat-elevation-z2">
       <!-- Posição Geral -->
       <ng-container matColumnDef="posicaoGeral">

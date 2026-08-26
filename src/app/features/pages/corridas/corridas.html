@@ -12,6 +12,14 @@
     </mat-form-field>
   </div>
 
+  @if (carregando) {
+    <div class="text-center text-gray-500 py-8">Carregando corridas...</div>
+  } @else if (erroCarregamento) {
+    <div class="text-center text-gray-600 py-8">
+      <p>Não foi possível carregar as corridas.</p>
+      <button mat-stroked-button color="primary" class="mt-3" (click)="carregarCorridas()">Tentar novamente</button>
+    </div>
+  } @else {
   <table mat-table [dataSource]="corridas" class="w-full mat-elevation-z2">
     <ng-container matColumnDef="nome">
       <th mat-header-cell *matHeaderCellDef> Nome </th>
@@ -51,6 +59,7 @@
     </div>
   }
 
+  @if (corridas.length > 0) {
   <mat-paginator
     [length]="totalRegistros"
     [pageSize]="registrosPorPagina"
@@ -58,4 +67,6 @@
     [pageSizeOptions]="[5, 10, 25]"
     (page)="mudarPagina($event)">
   </mat-paginator>
+  }
+  }
 </div>

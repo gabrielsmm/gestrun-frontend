@@ -24,6 +24,14 @@
       </mat-select>
     </mat-form-field>
   </div>
+  @if (carregandoCorridas) {
+    <div class="text-center text-gray-500 py-4">Carregando corridas...</div>
+  } @else if (erroCarregamentoCorridas) {
+    <div class="text-center text-gray-600 py-4">
+      <p>Não foi possível carregar as corridas.</p>
+      <button mat-stroked-button color="primary" class="mt-3" (click)="carregarCorridas()">Tentar novamente</button>
+    </div>
+  } @else {
   <div class="grid grid-cols-1 gap-4">
     <mat-form-field appearance="fill" class="min-w-[200px]">
       <mat-label>Buscar Corrida</mat-label>
@@ -45,6 +53,7 @@
       </mat-autocomplete>
     </mat-form-field>
   </div>
+  }
   @if (tipo === 2) {
     <div class="grid grid-cols-1 gap-4">
       <mat-form-field appearance="fill" class="flex-1 min-w-[200px]">

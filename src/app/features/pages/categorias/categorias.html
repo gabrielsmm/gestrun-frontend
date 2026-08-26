@@ -28,7 +28,14 @@
     </mat-form-field>
   </div>
 
-  @if (categorias.length > 0) {
+  @if (carregando) {
+    <div class="text-center text-gray-500 py-8">Carregando categorias...</div>
+  } @else if (erroCarregamento) {
+    <div class="text-center text-gray-600 py-8">
+      <p>Não foi possível carregar as categorias.</p>
+      <button mat-stroked-button color="primary" class="mt-3" (click)="carregarCategorias()">Tentar novamente</button>
+    </div>
+  } @else if (categorias.length > 0) {
     <!-- Tabela de categorias -->
     <table mat-table [dataSource]="categorias" class="w-full mat-elevation-z2">
       <ng-container matColumnDef="nome">
