@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 export class SenhaDiferenteMatcher implements ErrorStateMatcher {
@@ -48,7 +49,8 @@ export class Registro {
     private authService: AuthService,
     private router: Router,
     private toastr: ToastrService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService
   ) {
     this.registroForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -72,15 +74,13 @@ export class Registro {
       this.ngxUiLoaderService.start();
 
       this.authService.registrar({ nome, email, senha }).subscribe({
-        next: (res) => {
-          console.log(res);
+        next: () => {
           this.toastr.success('Registro realizado com sucesso!', 'Bem-vindo');
           this.router.navigate(['/auth/login']);
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();
-          this.toastr.error(err.error?.mensagem || 'Erro ao registrar usuário. Tente novamente mais tarde.', 'Erro ao registrar');
-          console.error('Erro ao registrar:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao registrar usuário. Tente novamente mais tarde.'), 'Erro ao registrar');
         },
         complete: () => {
           this.ngxUiLoaderService.stop();

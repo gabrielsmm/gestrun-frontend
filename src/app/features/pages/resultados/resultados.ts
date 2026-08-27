@@ -14,6 +14,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { of, switchMap } from 'rxjs';
 import { Corrida } from '../../../core/models/corrida.model';
 import { Resultado } from '../../../core/models/resultado.model';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
 import { CorridaSelecionadaService } from '../../../shared/services/corrida-selecionada.service';
 import { CorridasService } from '../corridas/service/corridas.service';
@@ -56,6 +57,8 @@ export class Resultados implements OnInit {
   corridasFiltradas: Corrida[] = [];
   corridaSelecionada: Corrida | null = null;
   corridaSelecionadaNome = '';
+  carregando = false;
+  erroCarregamento = false;
 
   constructor(
     private resultadosService: ResultadosService,
@@ -64,7 +67,8 @@ export class Resultados implements OnInit {
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private corridaSelecionadaService: CorridaSelecionadaService
+    private corridaSelecionadaService: CorridaSelecionadaService,
+    private apiErrorService: ApiErrorService
   ) {}
 
   ngOnInit(): void {
@@ -84,8 +88,8 @@ export class Resultados implements OnInit {
         this.corridas = res.conteudo || [];
         this.corridasFiltradas = this.corridas;
       },
-      error: () => {
-        this.toastr.error('Erro ao carregar corridas.', 'Erro');
+      error: (err) => {
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar corridas.'), 'Erro');
       }
     });
   }
@@ -106,6 +110,8 @@ export class Resultados implements OnInit {
 
   carregarResultados(): void {
     if (this.corridaSelecionada?.id) {
+      this.carregando = true;
+      this.erroCarregamento = false;
       this.ngxUiLoaderService.start();
 
       this.resultadosService.listarPorCorridaPaginado(this.corridaSelecionada.id, 0, 1000, '', 'tempo', 'ASC')
@@ -113,16 +119,21 @@ export class Resultados implements OnInit {
         next: (res: any) => {
           this.preencherLinhasResultados(res);
         },
-        error: () => {
+        error: (err) => {
+          this.carregando = false;
+          this.erroCarregamento = true;
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao carregar resultados da corrida.');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar resultados da corrida.'));
           this.linhasResultados = [{}];
         },
         complete: () => {
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
         }
       });
     } else {
+      this.carregando = false;
+      this.erroCarregamento = false;
       this.linhasResultados = [{}];
     }
   }
@@ -189,7 +200,7 @@ export class Resultados implements OnInit {
           if (err.status === 404) {
             this.toastr.warning('Inscrição não encontrada ou não está confirmada para o número de peito informado.');
           } else {
-            this.toastr.error('Erro ao buscar inscrição.');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao buscar inscrição.'));
           }
           this.limparLinha(linha);
         },
@@ -268,9 +279,9 @@ export class Resultados implements OnInit {
         this.adicionarNovaLinha();
         this.focarProximoInput(index);
       },
-      error: () => {
+      error: (err) => {
         this.ngxUiLoaderService.stop();
-        this.toastr.error('Erro ao salvar ou atualizar posições.');
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao salvar ou atualizar posições.'));
       },
       complete: () => {
         this.ngxUiLoaderService.stop();
@@ -333,9 +344,9 @@ export class Resultados implements OnInit {
             this.toastr.success('Resultado excluído e posições atualizadas!');
             this.adicionarNovaLinha();
           },
-          error: () => {
+          error: (err) => {
             this.ngxUiLoaderService.stop();
-            this.toastr.error('Erro ao excluir ou atualizar posições.');
+            this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao excluir ou atualizar posições.'));
           },
           complete: () => {
             this.ngxUiLoaderService.stop();

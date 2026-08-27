@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 
 @Component({
   selector: 'app-login',
@@ -36,7 +37,8 @@ export class Login {
     private authService: AuthService,
     private router: Router,
     private toastr: ToastrService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -57,8 +59,7 @@ export class Login {
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();
-          this.toastr.error(err.error?.mensagem || 'Erro ao realizar login. Tente novamente mais tarde.', 'Erro ao realizar login');
-          console.error('Erro ao realizar login:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao realizar login. Tente novamente mais tarde.'), 'Erro ao realizar login');
         },
         complete: () => {
           this.ngxUiLoaderService.stop();

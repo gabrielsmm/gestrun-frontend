@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Corrida } from '../../../../core/models/corrida.model';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { CorridasService } from '../service/corridas.service';
 
 function dataFuturaValidator(control: AbstractControl): ValidationErrors | null {
@@ -50,6 +51,7 @@ export class CorridaForm {
     private corridasService: CorridasService,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService,
     private dialogRef: MatDialogRef<CorridaForm>,
     @Inject(MAT_DIALOG_DATA) public corrida: Corrida | null
   ) {
@@ -83,8 +85,7 @@ export class CorridaForm {
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao atualizar a corrida. Tente novamente mais tarde.', 'Erro');
-          console.error('Erro ao atualizar corrida:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao atualizar a corrida. Tente novamente mais tarde.'), 'Erro');
         },
         complete: () => {
           this.ngxUiLoaderService.stop();
@@ -101,8 +102,7 @@ export class CorridaForm {
         },
         error: (err) => {
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao criar a corrida. Tente novamente mais tarde.', 'Erro');
-          console.error('Erro ao criar corrida:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao criar a corrida. Tente novamente mais tarde.'), 'Erro');
         },
         complete: () => {
           this.ngxUiLoaderService.stop();

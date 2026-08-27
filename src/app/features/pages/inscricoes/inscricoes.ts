@@ -17,6 +17,7 @@ import { Corrida } from '../../../core/models/corrida.model';
 import { Inscricao } from '../../../core/models/inscricao.model';
 import { SexoInscricao } from '../../../core/models/sexo-inscricao.enum';
 import { StatusInscricao } from '../../../core/models/status-inscricao.enum';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
 import { CorridaSelecionadaService } from '../../../shared/services/corrida-selecionada.service';
 import { CorridasService } from '../corridas/service/corridas.service';
@@ -48,6 +49,8 @@ export class Inscricoes implements OnInit {
   registrosPorPagina = 10;
   pagina = 0;
   filtro = '';
+  carregando = false;
+  erroCarregamento = false;
 
   corridas: Corrida[] = [];
   corridasFiltradas: Corrida[] = [];
@@ -62,7 +65,8 @@ export class Inscricoes implements OnInit {
     private dialog: MatDialog,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
-    private corridaSelecionadaService: CorridaSelecionadaService
+    private corridaSelecionadaService: CorridaSelecionadaService,
+    private apiErrorService: ApiErrorService
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +96,7 @@ export class Inscricoes implements OnInit {
         this.corridasFiltradas = this.corridas;
       },
       error: (err) => {
-        this.toastr.error('Erro ao carregar corridas.', 'Erro');
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar corridas.'), 'Erro');
       }
     });
   }
@@ -114,11 +118,15 @@ export class Inscricoes implements OnInit {
 
   carregarInscricoes(): void {
     if (!this.corridaSelecionada) {
+      this.carregando = false;
+      this.erroCarregamento = false;
       this.inscricoes = [];
       this.totalRegistros = 0;
       return;
     }
 
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.ngxUiLoaderService.start();
 
     this.inscricoesService
@@ -129,10 +137,13 @@ export class Inscricoes implements OnInit {
           this.totalRegistros = res.totalElementos;
         },
         error: (err) => {
+          this.erroCarregamento = true;
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao carregar inscrições.', 'Erro');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar inscrições.'), 'Erro');
         },
         complete: () => {
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
         }
       });
@@ -184,9 +195,9 @@ export class Inscricoes implements OnInit {
           next: () => {
             this.carregarInscricoes();
           },
-          error: () => {
+          error: (err) => {
             this.ngxUiLoaderService.stop();
-            this.toastr.error('Erro ao excluir inscrição.', 'Erro');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao excluir inscrição.'), 'Erro');
           },
           complete: () => {
             this.ngxUiLoaderService.stop();

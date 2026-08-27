@@ -15,6 +15,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { Categoria } from '../../../core/models/categoria.model';
 import { Corrida } from '../../../core/models/corrida.model';
 import { SexoCategoria } from '../../../core/models/sexo-categoria.enum';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
 import { CorridaSelecionadaService } from '../../../shared/services/corrida-selecionada.service';
 import { CorridasService } from '../corridas/service/corridas.service';
@@ -45,6 +46,8 @@ export class Categorias {
   registrosPorPagina = 10;
   pagina = 0;
   filtro = '';
+  carregando = false;
+  erroCarregamento = false;
 
   corridas: Corrida[] = [];
   corridasFiltradas: Corrida[] = [];
@@ -59,7 +62,8 @@ export class Categorias {
     private dialog: MatDialog,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
-    private corridaSelecionadaService: CorridaSelecionadaService
+    private corridaSelecionadaService: CorridaSelecionadaService,
+    private apiErrorService: ApiErrorService
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +93,7 @@ export class Categorias {
         this.corridasFiltradas = this.corridas;
       },
       error: (err) => {
-        this.toastr.error('Erro ao carregar corridas.', 'Erro');
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar corridas.'), 'Erro');
       }
     });
   }
@@ -111,11 +115,15 @@ export class Categorias {
 
   carregarCategorias(): void {
     if (!this.corridaSelecionada) {
+      this.carregando = false;
+      this.erroCarregamento = false;
       this.categorias = [];
       this.totalRegistros = 0;
       return;
     }
 
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.ngxUiLoaderService.start();
 
     this.categoriasService
@@ -126,10 +134,13 @@ export class Categorias {
           this.totalRegistros = res.totalElementos;
         },
         error: (err) => {
+          this.erroCarregamento = true;
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao carregar categorias.', 'Erro');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar categorias.'), 'Erro');
         },
         complete: () => {
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
         }
       });
@@ -179,9 +190,9 @@ export class Categorias {
             this.toastr.success('Categoria excluída com sucesso.', 'Sucesso');
             this.carregarCategorias();
           },
-          error: () => {
+          error: (err) => {
             this.ngxUiLoaderService.stop();
-            this.toastr.error('Erro ao excluir categoria.', 'Erro');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao excluir categoria.'), 'Erro');
           },
           complete: () => {
             this.ngxUiLoaderService.stop();

@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { Corrida } from '../../../core/models/corrida.model';
+import { ApiErrorService } from '../../../core/services/api-error.service';
 import { ConfirmacaoDialog, ConfirmacaoDialogData } from '../../../shared/components/confirmacao-dialog/confirmacao-dialog';
 import { CorridaForm } from './corrida-form/corrida-form';
 import { CorridasService } from './service/corridas.service';
@@ -37,6 +38,8 @@ export class Corridas implements OnInit {
   registrosPorPagina = 10;
   pagina = 0;
   filtro = '';
+  carregando = false;
+  erroCarregamento = false;
 
   private filtroSubject = new Subject<string>();
 
@@ -44,7 +47,8 @@ export class Corridas implements OnInit {
     private corridasService: CorridasService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private ngxUiLoaderService: NgxUiLoaderService
+    private ngxUiLoaderService: NgxUiLoaderService,
+    private apiErrorService: ApiErrorService
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +65,8 @@ export class Corridas implements OnInit {
   }
 
   carregarCorridas(): void {
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.ngxUiLoaderService.start();
 
     this.corridasService
@@ -71,11 +77,13 @@ export class Corridas implements OnInit {
           this.totalRegistros = res.totalElementos;
         },
         error: (err) => {
+          this.erroCarregamento = true;
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
-          this.toastr.error('Erro ao carregar corridas. Tente novamente mais tarde.', 'Erro');
-          console.error('Erro ao carregar corridas:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar corridas. Tente novamente mais tarde.'), 'Erro');
         },
         complete: () => {
+          this.carregando = false;
           this.ngxUiLoaderService.stop();
         }
       });
@@ -127,8 +135,7 @@ export class Corridas implements OnInit {
           },
           error: (err) => {
             this.ngxUiLoaderService.stop();
-            this.toastr.error('Erro ao excluir corrida. Tente novamente mais tarde.', 'Erro');
-            console.error('Erro ao excluir corrida:', err);
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao excluir corrida. Tente novamente mais tarde.'), 'Erro');
           },
           complete: () => {
             this.ngxUiLoaderService.stop();

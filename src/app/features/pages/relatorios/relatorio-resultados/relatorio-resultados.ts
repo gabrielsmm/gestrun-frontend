@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categoria } from '../../../../core/models/categoria.model';
 import { Corrida } from '../../../../core/models/corrida.model';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { CorridaSelecionadaService } from '../../../../shared/services/corrida-selecionada.service';
 import { downloadBlob } from '../../../../shared/utils/download.util';
 import { CategoriasService } from '../../categorias/service/categorias.service';
@@ -47,6 +48,8 @@ export class RelatorioResultados {
   corridasFiltradas: Corrida[] = [];
   corridaSelecionadaNome: string = '';
   categorias: Categoria[] = [];
+  carregandoCorridas = false;
+  erroCarregamentoCorridas = false;
 
   constructor(
     private relatorioService: RelatorioService,
@@ -54,7 +57,8 @@ export class RelatorioResultados {
     private categoriasService: CategoriasService,
     private toastr: ToastrService,
     private ngxUiLoaderService: NgxUiLoaderService,
-    private corridaSelecionadaService: CorridaSelecionadaService
+    private corridaSelecionadaService: CorridaSelecionadaService,
+    private apiErrorService: ApiErrorService
   ) {}
 
   ngOnInit() {
@@ -67,14 +71,21 @@ export class RelatorioResultados {
     }
   }
 
-  private carregarCorridas(): void {
+  carregarCorridas(): void {
+    this.carregandoCorridas = true;
+    this.erroCarregamentoCorridas = false;
     this.corridasService.listarPorOrganizadorPaginado(0, 1000, '').subscribe({
       next: (res) => {
         this.corridas = res.conteudo || [];
         this.corridasFiltradas = this.corridas;
       },
       error: (err) => {
-        this.toastr.error('Erro ao carregar corridas.');
+        this.carregandoCorridas = false;
+        this.erroCarregamentoCorridas = true;
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar corridas.'));
+      },
+      complete: () => {
+        this.carregandoCorridas = false;
       }
     });
   }
@@ -109,7 +120,7 @@ export class RelatorioResultados {
         this.categorias = res.conteudo || [];
       },
       error: (err) => {
-        this.toastr.error('Erro ao carregar categorias.');
+        this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao carregar categorias.'));
       }
     });
   }
@@ -147,7 +158,7 @@ export class RelatorioResultados {
         if (err.status === 404) {
           this.toastr.warning('Relatório sem dados para os filtros informados.');
         } else {
-          this.toastr.error('Erro ao exportar relatório.');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao exportar relatório.'));
         }
       },
       complete: () => {
@@ -173,7 +184,7 @@ export class RelatorioResultados {
         if (err.status === 404) {
           this.toastr.warning('Relatório sem dados para os filtros informados.');
         } else {
-          this.toastr.error('Erro ao exportar relatório.');
+          this.toastr.error(this.apiErrorService.mensagemParaUsuario(err, 'Erro ao exportar relatório.'));
         }
       },
       complete: () => {
