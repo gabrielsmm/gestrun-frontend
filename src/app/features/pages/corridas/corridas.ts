@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
@@ -25,14 +26,15 @@ import { CorridasService } from './service/corridas.service';
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatTooltipModule
   ],
   templateUrl: './corridas.html',
   styleUrl: './corridas.scss'
 })
 export class Corridas implements OnInit {
 
-  colunas = ['nome', 'data', 'local', 'distanciaKm', 'acoes'];
+  colunas = ['nome', 'data', 'local', 'distanciaKm', 'valorInscricao', 'inscricoes', 'capacidade', 'slug', 'acoes'];
   corridas: Corrida[] = [];
   totalRegistros = 0;
   registrosPorPagina = 10;
@@ -143,6 +145,46 @@ export class Corridas implements OnInit {
         });
       }
     });
+  }
+
+  alterarPublicacao(corrida: Corrida): void {
+    const publicada = !corrida.publicada;
+    const acao = publicada ? 'publicar' : 'despublicar';
+    const dialogRef = this.dialog.open(ConfirmacaoDialog, {
+      width: '400px',
+      data: <ConfirmacaoDialogData>{
+        titulo: `Confirmar ${acao}`,
+        mensagem: `Deseja ${acao} a corrida ${corrida.nome}?`,
+        confirmarTexto: `Sim, ${acao}`,
+        cancelarTexto: 'Não'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmado) => {
+      if (!confirmado) return;
+
+      this.ngxUiLoaderService.start();
+      this.corridasService.alterarPublicacao(corrida.id, publicada).subscribe({
+        next: () => {
+          this.toastr.success(`Corrida ${publicada ? 'publicada' : 'despublicada'} com sucesso.`, 'Sucesso');
+          this.carregarCorridas();
+        },
+        error: (err) => {
+          this.ngxUiLoaderService.stop();
+          this.toastr.error(
+            this.apiErrorService.mensagemParaUsuario(err, `Erro ao ${acao} a corrida. Tente novamente mais tarde.`),
+            'Erro'
+          );
+        },
+        complete: () => {
+          this.ngxUiLoaderService.stop();
+        }
+      });
+    });
+  }
+
+  descricaoCapacidade(corrida: Corrida): string {
+    return corrida.capacidade === 0 ? 'Sem vagas' : `${corrida.capacidade} vagas`;
   }
 
 }

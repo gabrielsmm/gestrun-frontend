@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -29,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       NgxUiLoaderModule.forRoot(ngxUiLoaderConfig)
     ),
-    { provide: MatPaginatorIntl, useFactory: getPtBrPaginatorIntl }
+    { provide: MatPaginatorIntl, useFactory: getPtBrPaginatorIntl },
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
   ]
 };
